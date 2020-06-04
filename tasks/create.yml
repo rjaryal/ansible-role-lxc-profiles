@@ -1,0 +1,19 @@
+---
+
+- name: lxc > profiles > Create
+  shell: |
+    echo "Creating profile ${LXC_PROFILE_ARG} ..."
+    lxc profile create ${LXC_PROFILE_ARG} ${LXC_PROJECT_ARG}
+  environment:
+    LXC_PROFILE_ARG: "{{ lxc_cluster ~ ':' ~ lxc_profile.name }}"
+    LXC_PROJECT_ARG: "{{ '--project ' ~ lxc_project }}"
+  when: lxc_profile.name not in lxc_profile_all
+  with_items: "{{ lxc_profiles | default([]) }}"
+  loop_control:
+    loop_var: lxc_profile
+
+- name: lxc > profiles > Update
+  include_tasks: update.yml
+  with_items: "{{ lxc_profiles | default([]) }}"
+  loop_control:
+    loop_var: lxc_profile

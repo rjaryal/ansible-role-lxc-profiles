@@ -1,0 +1,23 @@
+---
+
+- name: lxc > profile > Create tempfile
+  tempfile:
+    state: file
+    prefix: lxc_
+  changed_when: false
+  register: lxc_profile_temp
+
+- name: lxc > profile > Store in tempfile
+  copy:
+    content: "{{ lxc_profile.content | default({}) | to_nice_yaml(width=1024) }}"
+    dest: "{{ lxc_profile_temp.path }}"
+    force: true
+  changed_when: false
+
+- name: lxc > profiles > Apply update
+  shell: |
+    echo "Updating profile ${LXC_PROFILE_ARG} ..."
+    lxc profile edit "${LXC_PROFILE_ARG}" ${LXC_PROJECT_ARG} < "{{ lxc_profile_temp.path }}"
+  environment:
+    LXC_PROFILE_ARG: "{{ lxc_cluster ~ ':' ~ lxc_profile.name }}"
+    LXC_PROJECT_ARG: "{{ '--project ' ~ lxc_project }}"

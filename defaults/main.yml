@@ -1,0 +1,19 @@
+---
+
+lxc_cluster: ~
+lxc_project: ~
+
+# - Profiles -
+lxc_profile_enable: true
+
+#
+# https://github.com/lxc/lxd/blob/master/doc/instances.md
+#
+# lxc_profiles:                        OPTIONAL, default = []
+#   - name: <profile_name>             REQUIRED
+#     content:                         OPTIONAL, default = {}
+#       description: <description>     OPTIONAL, default = ''
+#       devices: <devices>             OPTIONAL, default = {}
+#       config: <configuration>        OPTIONAL, default = {}
+#
+lxc_profiles: []

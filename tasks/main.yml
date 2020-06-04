@@ -1,0 +1,30 @@
+---
+
+- name: lxc > profiles > Pre-requisite checks
+  include_tasks: check.yml
+
+- name: lxc > profiles > check > LXC profiles
+  shell: lxc profile list ${LXC_CLUSTER_ARG} ${LXC_PROJECT_ARG} --format json | jq -r '.[] | .name'
+  environment:
+    LXC_CLUSTER_ARG: "{{ lxc_cluster ~ ':' }}"
+    LXC_PROJECT_ARG: "{{ '--project ' ~ lxc_project }}"
+  register: lxc_profile_cmd
+  changed_when: false
+
+- name: lxc > profiles > declare > LXC profile names
+  set_fact:
+    lxc_profile_all: "{{ lxc_profile_cmd.stdout_lines }}"
+
+- name: lxc > profiles > debug > LXC profile names
+  debug:
+    msg: "{{ lxc_profile_all }}"
+    verbosity: 4
+  when: lxc_profile_all | default([]) | length
+
+- name: lxc > profiles > Delete
+  include_tasks: delete.yml
+  when: not (lxc_profile_enable | default(true) | bool)
+
+- name: lxc > profiles > Create
+  include_tasks: create.yml
+  when: (lxc_profile_enable | default(true) | bool)

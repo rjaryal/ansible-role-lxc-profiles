@@ -1,0 +1,7 @@
+---
+
+- name: lxc > projects > pre-requisite > LXC cluster and project
+  assert:
+    that:
+      - lxc_cluster is defined and lxc_cluster is not none
+      - lxc_project is defined and lxc_project is not none
